@@ -1,0 +1,700 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Zones of Inhibition</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&family=Lora:ital,wght@1,400;1,500&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: one calm reading column; tabs across the top; one activity at a time */
+:root {
+  --bg: #FBFAF7;
+  --surface: #FFFFFF;
+  --ink: #2F2924;
+  --muted: #7E705F;
+  --line: #E3DACD;
+  --line-strong: #CDBFAB;
+  --sage: #DFE5D4;
+  --sage-ink: #4F6340;
+  --good-bg: #E2EBDD;
+  --good: #3F6A44;
+  --bad-bg: #F4E3DC;
+  --bad: #9A4A35;
+  --select: #F1E7D3;
+  --font-display: 'Libre Baskerville', 'Baskerville', Georgia, serif;
+  --font-accent: 'Lora', Georgia, serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1B1916; --surface: #24211D; --ink: #ECE6DC; --muted: #A99C8A; --line: #3A352E; --line-strong: #514A40;
+    --sage: #2C3427; --sage-ink: #AFC39A; --good-bg: #24331F; --good: #9CC596; --bad-bg: #3A2620; --bad: #E2A08B; --select: #3A3326;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1B1916; --surface: #24211D; --ink: #ECE6DC; --muted: #A99C8A; --line: #3A352E; --line-strong: #514A40;
+  --sage: #2C3427; --sage-ink: #AFC39A; --good-bg: #24331F; --good: #9CC596; --bad-bg: #3A2620; --bad: #E2A08B; --select: #3A3326;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 17px; line-height: 1.6; }
+.wrap { max-width: 760px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 64px; }
+header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; border-bottom: 1px solid var(--line-strong); padding-bottom: 12px; }
+h1 { font-family: var(--font-display); font-weight: 400; font-size: 1.9rem; line-height: 1.15; margin: 0; text-wrap: balance; }
+.sub { font-family: var(--font-accent); font-style: italic; color: var(--muted); }
+.eyebrow { font-size: 0.72rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--sage-ink); font-weight: 600; margin-bottom: 6px; display: block; }
+nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 22px; }
+nav button { font: inherit; font-size: 0.92rem; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 7px 15px; cursor: pointer; }
+nav button[aria-selected="true"] { background: var(--sage); border-color: var(--sage-ink); color: var(--ink); font-weight: 600; }
+button:focus-visible, input:focus-visible, textarea:focus-visible, .pick:focus-visible { outline: 2px solid var(--sage-ink); outline-offset: 2px; }
+h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.35rem; margin: 0 0 4px; }
+.intro { color: var(--muted); margin: 0 0 18px; }
+.btn { font: inherit; font-size: 0.95rem; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); border-radius: 8px; padding: 8px 16px; cursor: pointer; }
+.btn.primary { background: var(--sage); border-color: var(--sage-ink); font-weight: 600; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.muted { color: var(--muted); }
+.small { font-size: 0.88rem; }
+
+/* flashcards */
+.fc { border: 1px solid var(--line-strong); background: var(--surface); border-radius: 14px; min-height: 230px; padding: 28px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; cursor: pointer; gap: 10px; }
+.fc .side { font-size: 0.72rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted); }
+.fc .front { font-family: var(--font-display); font-size: 1.6rem; line-height: 1.3; }
+.fc .back { font-size: 1.1rem; max-width: 52ch; }
+.fc.flipped { background: var(--sage); border-color: var(--sage-ink); }
+.count { font-variant-numeric: tabular-nums; }
+.bar { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; margin: 12px 0 16px; }
+.bar i { display: block; height: 100%; background: var(--sage-ink); width: 0; transition: width .3s; }
+
+/* gap fill */
+.para { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; line-height: 2.3; }
+.gap { font: inherit; width: 9.5em; max-width: 100%; border: none; border-bottom: 1.5px solid var(--line-strong); background: transparent; color: var(--ink); padding: 0 4px; text-align: center; }
+.gap.ok { border-color: var(--good); background: var(--good-bg); }
+.gap.no { border-color: var(--bad); background: var(--bad-bg); }
+.bank { border: 1px dashed var(--line-strong); border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; }
+.bank span { display: inline-block; margin: 3px 10px 3px 0; }
+
+/* matching */
+.mset { margin-bottom: 26px; }
+.mgrid { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 10px 14px; align-items: start; }
+.mcol { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.pick { font: inherit; font-size: 0.95rem; text-align: left; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); border-radius: 10px; padding: 9px 12px; cursor: pointer; display: flex; gap: 10px; align-items: center; min-height: 48px; }
+.pick .tag { flex: none; width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--line-strong); font-size: 0.8rem; display: flex; align-items: center; justify-content: center; font-variant-numeric: tabular-nums; }
+.pick.sel { background: var(--select); border-color: var(--sage-ink); }
+.pick.paired .tag { background: var(--sage); border-color: var(--sage-ink); font-weight: 600; }
+.pick.ok { background: var(--good-bg); border-color: var(--good); }
+.pick.no { background: var(--bad-bg); border-color: var(--bad); }
+
+/* q&a and exam */
+.qcard { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; margin-bottom: 16px; }
+.qhead { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.qnum { font-family: var(--font-display); color: var(--sage-ink); }
+.marks { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 0.9rem; white-space: nowrap; }
+.qtext { margin: 6px 0 12px; }
+.qtext .stem { color: var(--muted); }
+textarea, .num { font: inherit; width: 100%; border: 1px solid var(--line-strong); border-radius: 8px; padding: 10px 12px; background: var(--bg); color: var(--ink); resize: vertical; }
+.num { width: 9em; }
+.ans { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 12px; }
+.ans .lab { font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sage-ink); font-weight: 600; margin-bottom: 4px; }
+.mp { display: flex; gap: 10px; align-items: flex-start; padding: 4px 0; }
+.mp input { margin-top: 6px; width: 18px; height: 18px; accent-color: var(--sage-ink); flex: none; }
+.note { font-family: var(--font-accent); font-style: italic; color: var(--muted); font-size: 0.95rem; margin-top: 6px; }
+.verdict { font-weight: 600; margin-left: 4px; }
+.verdict.ok { color: var(--good); }
+.verdict.no { color: var(--bad); }
+.score { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); padding: 10px 0; margin-bottom: 16px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.cmd { background: var(--sage); border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; }
+.cmd dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 14px; margin: 6px 0 0; }
+.cmd dt { font-weight: 600; }
+.cmd dd { margin: 0; }
+sup { line-height: 0; }
+@media (max-width: 520px) {
+  body { font-size: 16px; }
+  .mgrid { grid-template-columns: 1fr; }
+  .fc { padding: 20px; }
+}
+@media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
+</style>
+<style>
+/* Additions for the zones page: topic links, teaching panels, the dish diagram, guided calculator */
+:root { --lawn: #E9E2D2; --lawn-dot: #D4C9B3; --clear: #FBFAF7; --disc: #FFFFFF; --pay: #F1E7D3; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --lawn: #3A352C; --lawn-dot: #4D463A; --clear: #1B1916; --disc: #ECE6DC; --pay: #3A3326; } }
+:root[data-theme="dark"] { --lawn: #3A352C; --lawn-dot: #4D463A; --clear: #1B1916; --disc: #ECE6DC; --pay: #3A3326; }
+.topics { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; font-size: 0.88rem; }
+.topics a, .topics span { border-radius: 6px; padding: 4px 10px; text-decoration: none; }
+.topics a { color: var(--ink); border: 1px solid var(--line-strong); }
+.topics span { background: var(--sage); border: 1px solid var(--sage-ink); font-weight: 600; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; margin-bottom: 22px; }
+.pay { background: var(--pay); border-radius: 10px; padding: 12px 16px; margin: 0 0 14px; }
+.pay strong { display: block; font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--sage-ink); margin-bottom: 4px; }
+.learn { font-family: var(--font-display); font-size: 1.12rem; line-height: 1.55; border-left: 3px solid var(--sage-ink); padding: 4px 0 4px 14px; margin: 10px 0 14px; }
+.panel p { margin: 0 0 10px; max-width: 65ch; }
+.dish { display: block; width: 100%; max-width: 380px; margin: 6px auto 4px; }
+.dish .lawn { fill: var(--lawn); }
+.dish .dot { fill: var(--lawn-dot); }
+.dish .rim { fill: none; stroke: var(--line-strong); stroke-width: 3; }
+.dish .zone { fill: var(--clear); stroke: var(--line-strong); stroke-width: 1; stroke-dasharray: 3 3; }
+.dish .disc { fill: var(--disc); stroke: var(--muted); stroke-width: 1; }
+.dish .lbl { fill: var(--ink); font-family: var(--font-body); font-size: 12px; font-weight: 600; }
+.dish .meas { stroke: var(--bad); stroke-width: 2; fill: none; }
+.dish .meas-t { fill: var(--bad); font-family: var(--font-body); font-size: 11px; font-weight: 600; }
+.cap { text-align: center; font-size: 0.88rem; color: var(--muted); margin: 0 0 12px; }
+ol.steps { margin: 6px 0 14px; padding-left: 1.4em; }
+ol.steps li { margin-bottom: 6px; }
+.worked { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; margin: 6px 0 14px; font-size: 0.95rem; }
+.worked th, .worked td { text-align: left; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+.worked th { font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--sage-ink); }
+.tablewrap { overflow-x: auto; }
+.mist { margin: 0; padding-left: 1.2em; }
+.mist li { margin-bottom: 4px; }
+.calc { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px 12px; align-items: center; margin: 12px 0; }
+.calc label { font-weight: 500; }
+.calc .num { width: 8em; }
+.fb { grid-column: 1 / -1; font-size: 0.92rem; min-height: 0; margin-top: -4px; }
+.fb.ok { color: var(--good); }
+.fb.no { color: var(--bad); }
+.given { font-size: 1.05rem; background: var(--bg); border: 1px dashed var(--line-strong); border-radius: 10px; padding: 10px 14px; font-variant-numeric: tabular-nums; }
+.pstep { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 4px 18px; padding: 12px 0; border-top: 1px solid var(--line); }
+.pstep:first-of-type { border-top: none; }
+.pstep .what { font-weight: 500; }
+.pstep .why { color: var(--muted); }
+.pstep .why b { color: var(--sage-ink); font-weight: 600; }
+.defs { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 8px 16px; margin: 6px 0 0; }
+.defs dt { font-weight: 600; }
+.defs dd { margin: 0; }
+.qtext table { border-collapse: collapse; margin: 8px 0; font-variant-numeric: tabular-nums; font-size: 0.95rem; }
+.qtext th, .qtext td { border: 1px solid var(--line-strong); padding: 5px 10px; text-align: center; }
+.qtext th { background: var(--bg); font-weight: 600; }
+.links a { color: var(--sage-ink); }
+@media (max-width: 520px) { .pstep { grid-template-columns: 1fr; } .defs { grid-template-columns: 1fr; gap: 2px; } .defs dd { margin-bottom: 8px; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div><span class="eyebrow">AQA Biology &middot; Required practical</span><h1>Zones of Inhibition</h1></div>
+    <span class="sub">Test and homework: Wednesday 11 November</span>
+  </header>
+  <div class="topics" aria-label="Revision topics"><a href="https://claude.ai/artifact/U4Sj77dLXLXxSmBxBphpwo">Cell structure</a><span aria-current="page">Zones of inhibition</span></div>
+
+  <nav role="tablist" aria-label="Activities">
+    <button role="tab" data-view="start" id="tab-start">Start here</button>
+    <button role="tab" data-view="practical" id="tab-practical">The practical</button>
+    <button role="tab" data-view="flashcards" id="tab-flashcards">Flashcards</button>
+    <button role="tab" data-view="gaps" id="tab-gaps">Gap fill</button>
+    <button role="tab" data-view="match" id="tab-match">Matching</button>
+    <button role="tab" data-view="qa" id="tab-qa">Q and A</button>
+    <button role="tab" data-view="exam" id="tab-exam">Exam questions</button>
+  </nav>
+
+  <!-- START HERE -->
+  <section id="start" class="view" hidden>
+    <div class="panel">
+      <div class="pay"><strong>Pay close attention: part 1 of 2</strong>Dr Rickard says some homework showed this was not understood. Learn this definition word for word.</div>
+      <h2>What is a zone of inhibition?</h2>
+      <p class="learn">A zone of inhibition is the clear area around an antiseptic or antibiotic disc on an agar plate, where bacteria cannot grow.</p>
+      <svg class="dish" viewBox="0 0 360 360" role="img" aria-labelledby="dishT">
+        <title id="dishT">A Petri dish covered in bacteria. Discs A, B and C have clear zones of different sizes around them. The water disc has no clear zone.</title>
+        <defs><pattern id="dots" width="9" height="9" patternUnits="userSpaceOnUse"><circle class="dot" cx="2" cy="2" r="1.3"/><circle class="dot" cx="6.5" cy="6.5" r="1.1"/></pattern></defs>
+        <circle class="lawn" cx="180" cy="180" r="160"/>
+        <circle cx="180" cy="180" r="160" fill="url(#dots)"/>
+        <circle class="zone" cx="115" cy="120" r="56"/>
+        <circle class="zone" cx="248" cy="122" r="32"/>
+        <circle class="zone" cx="118" cy="252" r="42"/>
+        <circle class="disc" cx="115" cy="120" r="10"/>
+        <circle class="disc" cx="248" cy="122" r="10"/>
+        <circle class="disc" cx="118" cy="252" r="10"/>
+        <circle class="disc" cx="248" cy="250" r="10"/>
+        <text class="lbl" x="115" y="124" text-anchor="middle">A</text>
+        <text class="lbl" x="248" y="126" text-anchor="middle">B</text>
+        <text class="lbl" x="118" y="256" text-anchor="middle">C</text>
+        <text class="lbl" x="248" y="277" text-anchor="middle">Water</text>
+        <path class="meas" d="M59 120 H171 M59 114 V126 M171 114 V126"/>
+        <text class="meas-t" x="115" y="160" text-anchor="middle">diameter</text>
+        <circle class="rim" cx="180" cy="180" r="160"/>
+      </svg>
+      <p class="cap">Dotted area: bacteria growing. Clear circles: zones of inhibition.</p>
+      <p><b>Why is the area clear?</b> The antiseptic soaks out of the paper disc into the agar. Close to the disc it is strong enough to kill the bacteria or stop them reproducing, so nothing grows there.</p>
+      <p><b>What does the size tell you?</b> A bigger zone means the antiseptic is more effective against that bacterium. In the diagram, A is the most effective and B is the least.</p>
+      <p><b>No clear zone</b> means the substance has no effect on that bacterium. The water disc is the control, so it should never have a zone.</p>
+    </div>
+
+    <div class="panel">
+      <div class="pay"><strong>Pay close attention: part 2 of 2</strong>Dr Rickard asked you to learn how to calculate the area. Follow these four steps every time, in this order.</div>
+      <h2>How to calculate the area</h2>
+      <ol class="steps">
+        <li><b>Measure the diameter twice</b>, at right angles to each other, in millimetres (mm). Zones are not always perfect circles.</li>
+        <li><b>Find the mean diameter:</b> add the two diameters and divide by 2.</li>
+        <li><b>Find the radius:</b> halve the mean diameter.</li>
+        <li><b>Calculate the area:</b> area = &pi;r<sup>2</sup>. Use the &pi; button on your calculator. The unit is mm<sup>2</sup>.</li>
+      </ol>
+      <div class="lab eyebrow">Worked example from Dr Rickard&rsquo;s OneNote</div>
+      <div class="tablewrap"><table class="worked">
+        <tr><th>Disc</th><th>Diameter 1</th><th>Diameter 2</th><th>Mean diameter</th><th>Radius</th><th>Area</th></tr>
+        <tr><td>Antibiotic A</td><td>15 mm</td><td>16 mm</td><td>(15 + 16) &divide; 2 = 15.5 mm</td><td>7.75 mm</td><td>&pi; &times; 7.75<sup>2</sup> = 188.69 mm<sup>2</sup></td></tr>
+        <tr><td>Antibiotic B</td><td>10 mm</td><td>8 mm</td><td>(10 + 8) &divide; 2 = 9 mm</td><td>4.5 mm</td><td>&pi; &times; 4.5<sup>2</sup> = 63.62 mm<sup>2</sup></td></tr>
+      </table></div>
+      <div class="lab eyebrow">Mistakes that lose marks</div>
+      <ul class="mist">
+        <li>Using the diameter in &pi;r<sup>2</sup> instead of the radius.</li>
+        <li>Doing &pi; &times; r &times; 2 instead of &pi; &times; r &times; r.</li>
+        <li>Writing mm instead of mm<sup>2</sup> for an area.</li>
+      </ul>
+    </div>
+
+    <div class="panel">
+      <h2>Try it</h2>
+      <p class="muted">Work through the four steps. Each box is checked when you press Check. Press New numbers to practise again.</p>
+      <div class="given" id="pGiven"></div>
+      <div class="calc">
+        <label for="pMean">Step 2: mean diameter (mm)</label><input class="num" id="pMean" inputmode="decimal" autocomplete="off"><div class="fb" id="fMean"></div>
+        <label for="pRad">Step 3: radius (mm)</label><input class="num" id="pRad" inputmode="decimal" autocomplete="off"><div class="fb" id="fRad"></div>
+        <label for="pArea">Step 4: area (mm<sup>2</sup>), to 1 decimal place</label><input class="num" id="pArea" inputmode="decimal" autocomplete="off"><div class="fb" id="fArea"></div>
+      </div>
+      <div class="row"><button class="btn primary" id="pCheck">Check</button><button class="btn" id="pNew">New numbers</button><span class="count" id="pScore"></span></div>
+    </div>
+  </section>
+
+  <!-- THE PRACTICAL -->
+  <section id="practical" class="view" hidden>
+    <h2>The required practical</h2>
+    <p class="intro">Investigating the effect of antiseptics on the growth of bacteria. Exam questions often ask for a step and the reason for it, so learn both columns.</p>
+
+    <div class="panel">
+      <div class="eyebrow">Part 1: prepare a plate of bacteria</div>
+      <div class="pstep"><div class="what">1. Sterilise the Petri dish and agar in an autoclave, or use dishes bought already sterile.</div><div class="why"><b>Why:</b> kills any microorganisms already there.</div></div>
+      <div class="pstep"><div class="what">2. Pour the sterile agar into the dish and let it set.</div><div class="why"><b>Why:</b> agar gives the bacteria the nutrients they need to grow.</div></div>
+      <div class="pstep"><div class="what">3. Pass the inoculating loop through a Bunsen flame until it glows red, then let it cool.</div><div class="why"><b>Why:</b> kills microorganisms on the loop. Cooling stops it killing the bacteria you want to grow.</div></div>
+      <div class="pstep"><div class="what">4. Spread the bacteria evenly over the agar. Lift the lid only slightly while you do this.</div><div class="why"><b>Why:</b> gives an even layer of bacteria (a &ldquo;lawn&rdquo;). Lifting the lid slightly stops microorganisms from the air getting in.</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="eyebrow">Part 2: test the antiseptics</div>
+      <div class="pstep"><div class="what">5. Soak paper discs in different antiseptics, or in different concentrations of one antiseptic. Soak one disc in sterile water.</div><div class="why"><b>Why:</b> the water disc is the control. It shows that any clear zone is caused by the antiseptic, not the paper disc.</div></div>
+      <div class="pstep"><div class="what">6. Use sterile forceps to place the discs on the agar, spaced well apart.</div><div class="why"><b>Why:</b> sterile forceps stop contamination. Spacing stops the zones overlapping.</div></div>
+      <div class="pstep"><div class="what">7. Secure the lid with two strips of tape. Do not seal it all the way round.</div><div class="why"><b>Why:</b> stops microorganisms getting in, but lets oxygen in so harmful anaerobic bacteria do not grow.</div></div>
+      <div class="pstep"><div class="what">8. Label the dish and store it upside down.</div><div class="why"><b>Why:</b> the label tells you what is growing. Upside down stops condensation dripping onto the agar.</div></div>
+      <div class="pstep"><div class="what">9. Incubate at 25 &deg;C for about 48 hours.</div><div class="why"><b>Why:</b> 25 &deg;C reduces the chance of growing pathogens. Hospital laboratories use 37 &deg;C (body temperature) so bacteria grow faster.</div></div>
+      <div class="pstep"><div class="what">10. Measure the diameter of each clear zone twice and calculate its area.</div><div class="why"><b>Why:</b> the bigger the zone, the more effective the antiseptic.</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="eyebrow">The variables</div>
+      <dl class="defs">
+        <dt>Independent</dt><dd>The type (or concentration) of antiseptic. This is what you change.</dd>
+        <dt>Dependent</dt><dd>The area of the zone of inhibition. This is what you measure.</dd>
+        <dt>Control</dt><dd>Kept the same: type of bacterium, size of disc, volume of antiseptic, incubation temperature and time.</dd>
+      </dl>
+    </div>
+
+    <div class="panel">
+      <div class="eyebrow">Words that are easy to mix up</div>
+      <dl class="defs">
+        <dt>Antiseptic</dt><dd>A chemical used on living tissue, such as skin, to kill microorganisms or stop them growing.</dd>
+        <dt>Disinfectant</dt><dd>A chemical used on non-living surfaces, such as kitchen worktops.</dd>
+        <dt>Antibiotic</dt><dd>A medicine that kills bacteria inside the body. Antibiotics do not work against viruses.</dd>
+        <dt>Aseptic technique</dt><dd>Ways of working that stop unwanted microorganisms getting into a culture.</dd>
+      </dl>
+    </div>
+
+    <div class="panel links">
+      <div class="eyebrow">Read or watch more</div>
+      <p><a href="https://www.bbc.co.uk/bitesize/guides/z8fkmsg/revision/7">BBC Bitesize: How do antiseptics affect the growth of bacteria?</a></p>
+      <p><a href="https://www.bbc.co.uk/bitesize/guides/z8fkmsg/video">BBC Bitesize: video on antiseptics and bacterial growth</a></p>
+      <p style="margin:0"><a href="https://www.savemyexams.com/glossary/gcse/biology/zones-of-inhibition/">Save My Exams: Zones of inhibition</a></p>
+    </div>
+  </section>
+
+  <!-- FLASHCARDS -->
+  <section id="flashcards" class="view" hidden>
+    <h2>Flashcards</h2>
+    <p class="intro">Say the answer out loud, then tap the card to check. Cards you mark &ldquo;Not yet&rdquo; come back at the end.</p>
+    <div class="row"><span class="count muted" id="fcCount"></span></div>
+    <div class="bar"><i id="fcBar"></i></div>
+    <div class="fc" id="fcCard" tabindex="0" role="button" aria-label="Flip card"></div>
+    <div class="row" style="margin-top:14px">
+      <button class="btn primary" id="fcKnow">I knew it</button>
+      <button class="btn" id="fcNot">Not yet</button>
+      <span style="flex:1"></span>
+      <button class="btn" id="fcSwap">Start with the definition</button>
+      <button class="btn" id="fcRestart">Start again</button>
+    </div>
+  </section>
+
+  <!-- GAP FILL -->
+  <section id="gaps" class="view" hidden>
+    <h2>Gap fill</h2>
+    <p class="intro">Type the missing word in each gap, then press Check. Spelling counts, as it does in the exam.</p>
+    <details class="bank"><summary>Show the word box</summary><div id="bank"></div></details>
+    <div id="gapParas"></div>
+    <div class="row"><button class="btn primary" id="gapCheck">Check</button><button class="btn" id="gapShow">Show answers</button><button class="btn" id="gapReset">Clear</button><span class="count" id="gapScore"></span></div>
+  </section>
+
+  <!-- MATCHING -->
+  <section id="match" class="view" hidden>
+    <h2>Matching</h2>
+    <p class="intro">Tap an item on the left, then tap the one that goes with it. When every item has a number, press Check.</p>
+    <div id="matchSets"></div>
+  </section>
+
+  <!-- Q AND A -->
+  <section id="qa" class="view" hidden>
+    <h2>Q and A</h2>
+    <p class="intro">Write a short answer, then show the answer and mark yourself honestly. Questions you mark &ldquo;Not yet&rdquo; come back at the end.</p>
+    <div class="row"><span class="count muted" id="qaCount"></span></div>
+    <div class="bar"><i id="qaBar"></i></div>
+    <div id="qaBox"></div>
+  </section>
+
+  <!-- EXAM -->
+  <section id="exam" class="view" hidden>
+    <h2>Exam questions</h2>
+    <p class="intro">Written in the style of AQA GCSE questions. Answer, then press Mark it and tick each mark point you included.</p>
+    <div class="cmd">
+      <strong>What the command word wants</strong>
+      <dl>
+        <dt>Give / Name</dt><dd>A short answer. No explanation needed.</dd>
+        <dt>Describe</dt><dd>Say what something is or what happens.</dd>
+        <dt>Explain</dt><dd>Say why or how, using science. Use &ldquo;because&rdquo; or &ldquo;so&rdquo;.</dd>
+        <dt>Suggest</dt><dd>Use what you know in a new situation.</dd>
+        <dt>Calculate</dt><dd>Show your working and give the unit.</dd>
+      </dl>
+      <p class="small" style="margin:8px 0 0">The number of marks tells you how many separate points to make.</p>
+    </div>
+    <div class="score"><span><strong>Your score:</strong> <span class="count" id="exScore">0</span> / <span class="count" id="exTotal"></span> marks</span><button class="btn" id="exReset">Clear all</button></div>
+    <div id="exList"></div>
+  </section>
+</div>
+
+<script>
+/* ---------------- content ---------------- */
+var CARDS = [
+  ["Zone of inhibition", "The clear area around an antiseptic or antibiotic disc on an agar plate, where bacteria cannot grow."],
+  ["What does a bigger zone of inhibition show?", "The antiseptic or antibiotic is more effective against that bacterium."],
+  ["What does no zone of inhibition show?", "The substance has no effect on that bacterium. The bacterium may be resistant to it."],
+  ["Equation for the area of a zone", "Area = &pi;r<sup>2</sup>, where r is the radius."],
+  ["How do you find the radius?", "Halve the mean diameter."],
+  ["Why measure the diameter twice, at right angles?", "Zones are not always perfect circles, so the mean of two measurements is more accurate."],
+  ["Unit for the area of a zone", "mm<sup>2</sup> (square millimetres)"],
+  ["Antiseptic", "A chemical used on living tissue, such as skin, to kill microorganisms or stop them growing."],
+  ["Disinfectant", "A chemical used on non-living surfaces, such as worktops."],
+  ["Antibiotic", "A medicine that kills bacteria inside the body. It does not work against viruses."],
+  ["Aseptic technique", "Ways of working that stop unwanted microorganisms contaminating a culture."],
+  ["Agar", "A jelly that contains the nutrients bacteria need to grow."],
+  ["Autoclave", "A machine that sterilises equipment using steam at high pressure and temperature."],
+  ["Inoculating loop", "A wire loop used to transfer bacteria onto agar. It is sterilised in a Bunsen flame."],
+  ["The control disc", "A paper disc soaked in sterile water. It shows that any clear zone is caused by the antiseptic, not the paper."],
+  ["Why incubate at 25 &deg;C in school?", "To reduce the chance of growing pathogens (harmful bacteria)."],
+  ["Why do hospitals incubate at 37 &deg;C?", "It is body temperature, so bacteria grow faster and can be identified quickly."],
+  ["Why tape the lid but not seal it all round?", "Tape stops microorganisms getting in. Leaving gaps lets oxygen in, so harmful anaerobic bacteria do not grow."],
+  ["Why store the plate upside down?", "So condensation does not drip onto the agar."],
+  ["Why lift the lid only slightly?", "So microorganisms from the air do not get onto the agar."],
+  ["Antibiotic resistance", "Bacteria that are no longer killed by an antibiotic. It happens when a mutation makes a bacterium resistant and it survives and reproduces."]
+];
+
+var GAPS = [
+  "A zone of inhibition is the {clear} area around an antiseptic disc on an {agar} plate, where {bacteria} cannot grow.",
+  "The {bigger} the zone of inhibition, the more effective the antiseptic is against that bacterium.",
+  "To find the area, first find the {mean} of two diameters. Then halve it to find the {radius}. Then use area = &pi;r<sup>2</sup>. The unit is square {millimetres}.",
+  "Equipment is sterilised in an {autoclave}. The inoculating loop is passed through a Bunsen {flame}, then left to cool.",
+  "The lid is secured with {tape}, but not sealed all the way round, so that {oxygen} can get in. The plate is stored {upside} down.",
+  "In school, plates are incubated at {25} &deg;C to reduce the chance of growing {pathogens}.",
+  "A disc soaked in sterile {water} is the {control}. It should have no zone of inhibition.",
+  "An {antiseptic} is used on living tissue such as skin. An {antibiotic} is a medicine that kills bacteria inside the body."
+];
+var GAP_ALT = { "bigger": ["bigger", "larger"], "pathogens": ["pathogens", "pathogen"], "millimetres": ["millimetres", "millimeters", "mm"], "bacteria": ["bacteria", "microorganisms"] };
+
+var MATCH = [
+  { title: "Step and the reason for it", pairs: [
+    ["Sterilise dishes and agar in an autoclave", "Kills microorganisms already there"],
+    ["Flame the inoculating loop", "Kills microorganisms on the loop"],
+    ["Lift the lid only slightly", "Stops microorganisms from the air getting in"],
+    ["Tape the lid, but not all the way round", "Lets oxygen in so anaerobic bacteria do not grow"],
+    ["Store the plate upside down", "Stops condensation dripping onto the agar"],
+    ["Incubate at 25 &deg;C", "Reduces the chance of growing pathogens"],
+    ["Include a disc soaked in sterile water", "Shows the paper disc does not stop bacteria growing"]
+  ]},
+  { title: "Word and meaning", pairs: [
+    ["Antiseptic", "Used on living tissue such as skin"],
+    ["Disinfectant", "Used on non-living surfaces"],
+    ["Antibiotic", "A medicine that kills bacteria inside the body"],
+    ["Zone of inhibition", "Clear area where bacteria cannot grow"],
+    ["Agar", "Jelly containing nutrients for bacteria"],
+    ["Independent variable", "The type of antiseptic"],
+    ["Dependent variable", "The area of the clear zone"]
+  ]}
+];
+
+var QA = [
+  ["What is a zone of inhibition?", "The clear area around an antiseptic or antibiotic disc on an agar plate, where bacteria cannot grow."],
+  ["Why is the area around the disc clear?", "The antiseptic soaks into the agar and kills the bacteria or stops them reproducing."],
+  ["Which antiseptic is the most effective?", "The one with the largest zone of inhibition."],
+  ["Write the equation for the area of a circle.", "Area = &pi;r<sup>2</sup>"],
+  ["The two diameters of a zone are 12 mm and 14 mm. What is the mean diameter?", "(12 + 14) &divide; 2 = 13 mm"],
+  ["The mean diameter of a zone is 13 mm. What is the radius?", "13 &divide; 2 = 6.5 mm"],
+  ["What unit is the area of a zone given in?", "mm<sup>2</sup>"],
+  ["What is the difference between an antiseptic and an antibiotic?", "An antiseptic is used on living tissue such as skin. An antibiotic is a medicine that kills bacteria inside the body."],
+  ["Why is the inoculating loop heated in a flame?", "To kill any microorganisms on it."],
+  ["Why is the loop left to cool before use?", "So it does not kill the bacteria you want to grow."],
+  ["Why is the lid taped but not sealed all the way round?", "So oxygen can get in and harmful anaerobic bacteria do not grow."],
+  ["Why is the plate stored upside down?", "So condensation does not drip onto the agar."],
+  ["Why are plates incubated at 25 &deg;C in school?", "To reduce the chance of growing pathogens."],
+  ["What is the control in this practical?", "A paper disc soaked in sterile water."],
+  ["Name the independent and dependent variables.", "Independent: type (or concentration) of antiseptic. Dependent: area of the zone of inhibition."],
+  ["Give two control variables.", "Any two from: type of bacterium, size of disc, volume of antiseptic, incubation temperature, incubation time."]
+];
+
+var T_TABLE = '<table><tr><th>Antiseptic</th><th>Diameter 1 (mm)</th><th>Diameter 2 (mm)</th><th>Mean diameter (mm)</th></tr><tr><td>P</td><td>12</td><td>14</td><td>13</td></tr><tr><td>Q</td><td>0</td><td>0</td><td>0</td></tr><tr><td>R</td><td>19</td><td>17</td><td>X</td></tr><tr><td>Water</td><td>0</td><td>0</td><td>0</td></tr></table>';
+
+var EXAM = [
+  { q: "What is meant by the term <strong>zone of inhibition</strong>?", marks: 1,
+    mp: ["The clear area around an antiseptic/antibiotic disc where bacteria cannot grow"], note: "" },
+  { q: "Give <strong>one</strong> difference between an antiseptic and an antibiotic.", marks: 2,
+    mp: ["An antiseptic is used on living tissue / on the outside of the body, such as skin", "An antibiotic is a medicine that kills bacteria inside the body"], note: "1 mark for each half of the comparison." },
+  { q: "Describe <strong>two</strong> aseptic techniques a student should use when preparing an agar plate of bacteria.", marks: 2,
+    mp: ["Sterilise the Petri dish and agar before use", "Pass the inoculating loop through a flame (and let it cool)", "Lift the lid only slightly", "Tape the lid on", "Work near a lit Bunsen burner"], note: "Any two, 1 mark each." },
+  { q: "The student secured the lid of the Petri dish with two strips of tape.<br>The lid was not sealed all the way round.<br>Explain why.", marks: 2,
+    mp: ["So oxygen can get into the dish", "So harmful anaerobic bacteria do not grow"], note: "" },
+  { q: "Explain why plates are incubated at 25 &deg;C in a school laboratory.", marks: 2,
+    mp: ["To reduce the chance of growing pathogens / harmful bacteria", "Pathogens grow best at 37 &deg;C / body temperature"], note: "" },
+  { q: "One paper disc was soaked in sterile water instead of antiseptic.<br>Give the reason for this disc.", marks: 1,
+    mp: ["It is a control: to show that the antiseptic, not the paper disc, stopped the bacteria growing"], note: "" },
+  { type: "num", q: "The diameter of a zone of inhibition was measured twice: 22 mm and 20 mm.<br>Calculate the area of the zone.<br>Use the equation area = &pi;r<sup>2</sup>. Give your answer to 3 significant figures.", marks: 3, unit: "mm<sup>2</sup>", answer: 346, tol: 1,
+    mp: ["Mean diameter = (22 + 20) &divide; 2 = 21 mm", "Radius = 21 &divide; 2 = 10.5 mm", "Area = &pi; &times; 10.5<sup>2</sup> = 346 mm<sup>2</sup>"], note: "If you used &pi; = 3.14 you get 346.2, which also rounds to 346." },
+  { type: "num", q: "The mean diameter of a different zone of inhibition is 9 mm.<br>Calculate the area of the zone.<br>Give your answer to 3 significant figures.", marks: 3, unit: "mm<sup>2</sup>", answer: 63.6, tol: 0.1,
+    mp: ["Radius = 9 &divide; 2 = 4.5 mm", "Area = &pi; &times; 4.5<sup>2</sup>", "= 63.6 mm<sup>2</sup>"], note: "A common wrong answer is 254 mm<sup>2</sup>. That comes from using the diameter instead of the radius." },
+  { q: "A student investigated the effect of three different antiseptics on the growth of bacteria.<br>Name:<br>(a) the independent variable<br>(b) the dependent variable<br>(c) <strong>one</strong> control variable.", marks: 3,
+    mp: ["(a) The type of antiseptic", "(b) The size / area of the zone of inhibition", "(c) Any one from: type of bacterium, size of disc, volume of antiseptic, incubation temperature, incubation time"], note: "1 mark each." },
+  { type: "num", label: "10 (a)", q: "The table shows a student&rsquo;s results." + T_TABLE + "Calculate the mean diameter, <strong>X</strong>, for antiseptic R.", marks: 1, unit: "mm", answer: 18, tol: 0,
+    mp: ["(19 + 17) &divide; 2 = 18 mm"], note: "" },
+  { label: "10 (b)", q: "Use the table." + T_TABLE + "Which antiseptic was the most effective against the bacterium?<br>Give a reason for your answer.", marks: 2,
+    mp: ["R", "It has the largest zone of inhibition / mean diameter"], note: "The reason must use the data. &ldquo;It killed the most bacteria&rdquo; alone does not get the second mark." },
+  { label: "10 (c)", q: "Use the table." + T_TABLE + "There was no clear zone around antiseptic Q.<br>Suggest why.", marks: 1,
+    mp: ["Q does not kill / stop the growth of this bacterium / the bacterium is resistant to Q"], note: "" },
+  { q: "Explain why a more effective antiseptic produces a larger zone of inhibition.", marks: 2,
+    mp: ["The antiseptic diffuses / spreads out from the disc into the agar", "It still kills bacteria at lower concentrations, so bacteria are killed further from the disc"], note: "" },
+  { q: "The student measured the diameter of each zone twice, at right angles to each other.<br>Explain why.", marks: 2,
+    mp: ["The zones may not be perfect circles", "So the mean gives a more accurate measurement"], note: "" },
+  { q: "One year later, an antibiotic that used to kill a type of bacterium had no effect on it.<br>Suggest why.", marks: 2,
+    mp: ["A mutation made some bacteria resistant to the antibiotic", "The resistant bacteria survived and reproduced, so the population became resistant"], note: "" },
+  { q: "<span class=\"stem\">6 marks. This is an extended answer: write in full sentences and in a sensible order.</span><br>Describe a method to investigate the effect of different antiseptics on the growth of bacteria.", marks: 6, level: true,
+    mp: ["Use sterile Petri dishes and agar", "Flame the inoculating loop and let it cool", "Spread bacteria evenly over the agar, lifting the lid only slightly", "Soak paper discs in different antiseptics", "Include a control disc soaked in sterile water", "Place the discs on the agar with sterile forceps", "Tape the lid (not fully sealed) and store upside down", "Incubate at 25 &deg;C for about 48 hours", "Measure the diameter of each clear zone and calculate the area", "Compare: the largest zone shows the most effective antiseptic"],
+    note: "Marked in levels. A full method in a logical order that would give valid results: 5 to 6 marks. Some steps in order, with a few gaps: 3 to 4 marks. One or two steps: 1 to 2 marks. Your score here is a guide: count 1 mark per ticked point, up to 6." }
+];
+
+/* ---------------- helpers ---------------- */
+function $(id) { return document.getElementById(id); }
+function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+function norm(s) { return s.toLowerCase().replace(/\s+/g, " ").trim(); }
+function num(s) { var v = parseFloat(String(s).replace(/[^0-9.\-]/g, "")); return isNaN(v) ? null : v; }
+
+/* ---------------- tabs ---------------- */
+var VIEWS = ["start", "practical", "flashcards", "gaps", "match", "qa", "exam"];
+function show(v) {
+  if (VIEWS.indexOf(v) < 0) v = "start";
+  VIEWS.forEach(function (x) { $(x).hidden = x !== v; $("tab-" + x).setAttribute("aria-selected", x === v ? "true" : "false"); });
+}
+document.querySelectorAll("nav button").forEach(function (b) {
+  b.addEventListener("click", function () { location.hash = b.dataset.view; show(b.dataset.view); });
+});
+window.addEventListener("hashchange", function () { show(location.hash.slice(1)); });
+
+/* ---------------- guided area practice ---------------- */
+var P = {};
+function pNew() {
+  var d1 = 8 + Math.floor(Math.random() * 17), d2 = d1 + [-2, -1, 1, 2][Math.floor(Math.random() * 4)];
+  P = { d1: d1, d2: d2, mean: (d1 + d2) / 2 };
+  P.r = P.mean / 2; P.area = Math.PI * P.r * P.r;
+  $("pGiven").innerHTML = "Step 1 is done for you. The diameters are <b>" + d1 + " mm</b> and <b>" + d2 + " mm</b>.";
+  ["pMean", "pRad", "pArea"].forEach(function (id) { $(id).value = ""; });
+  ["fMean", "fRad", "fArea"].forEach(function (id) { $(id).textContent = ""; $(id).className = "fb"; });
+  $("pScore").textContent = "";
+}
+function near(a, b, tol) { return a !== null && Math.abs(a - b) <= tol; }
+function say(id, ok, msg) { $(id).className = "fb " + (ok ? "ok" : "no"); $(id).textContent = msg; }
+$("pCheck").addEventListener("click", function () {
+  var m = num($("pMean").value), r = num($("pRad").value), a = num($("pArea").value), n = 0;
+  if (near(m, P.mean, 0.001)) { say("fMean", true, "Correct."); n++; }
+  else if (m === null) say("fMean", false, "Add the two diameters, then divide by 2.");
+  else if (near(m, P.d1 + P.d2, 0.001)) say("fMean", false, "You added them. Now divide by 2.");
+  else say("fMean", false, "Not quite. (" + P.d1 + " + " + P.d2 + ") ÷ 2");
+  if (near(r, P.r, 0.001)) { say("fRad", true, "Correct."); n++; }
+  else if (r === null) say("fRad", false, "Halve the mean diameter.");
+  else if (near(r, P.mean, 0.001)) say("fRad", false, "That is the diameter. Halve it to get the radius.");
+  else say("fRad", false, "Not quite. Radius = mean diameter ÷ 2");
+  var area1 = Math.round(P.area * 10) / 10, area314 = Math.round(3.14 * P.r * P.r * 10) / 10;
+  if (near(a, P.area, 0.06) || near(a, area314, 0.06)) { say("fArea", true, "Correct. " + area1 + " mm²"); n++; }
+  else if (a === null) say("fArea", false, "Area = π × radius × radius");
+  else if (near(a, Math.PI * P.mean * P.mean, 0.6)) say("fArea", false, "You used the diameter. Use the radius instead.");
+  else if (near(a, Math.PI * P.r * 2, 0.2)) say("fArea", false, "You multiplied by 2. Square the radius instead: radius × radius.");
+  else if (near(a, Math.PI * P.r, 0.2)) say("fArea", false, "You forgot to square the radius.");
+  else say("fArea", false, "Not quite. π × " + P.r + " × " + P.r);
+  $("pScore").textContent = n + " / 3";
+});
+$("pNew").addEventListener("click", pNew);
+
+/* ---------------- flashcards ---------------- */
+var fc = { deck: [], i: 0, flipped: false, known: 0, defFirst: false };
+function fcStart() { fc.deck = shuffle(CARDS); fc.i = 0; fc.known = 0; fc.flipped = false; fcDraw(); }
+function fcDraw() {
+  var card = $("fcCard"), total = CARDS.length;
+  $("fcBar").style.width = (fc.known / total * 100) + "%";
+  if (fc.i >= fc.deck.length) {
+    card.className = "fc flipped";
+    card.innerHTML = '<span class="side">Finished</span><span class="front">You know all ' + total + ' cards</span>';
+    $("fcCount").textContent = total + " of " + total + " known";
+    $("fcKnow").hidden = true; $("fcNot").hidden = true; return;
+  }
+  $("fcKnow").hidden = false; $("fcNot").hidden = false;
+  var c = fc.deck[fc.i], a = fc.defFirst ? c[1] : c[0], b = fc.defFirst ? c[0] : c[1];
+  $("fcCount").textContent = fc.known + " of " + total + " known";
+  if (!fc.flipped) { card.className = "fc"; card.innerHTML = '<span class="side">' + (fc.defFirst ? "What is it?" : "Say what you know") + '</span><span class="front">' + a + '</span><span class="small muted">Tap to turn over</span>'; }
+  else { card.className = "fc flipped"; card.innerHTML = '<span class="side">Answer</span><span class="back">' + b + '</span>'; }
+}
+$("fcCard").addEventListener("click", function () { if (fc.i < fc.deck.length) { fc.flipped = !fc.flipped; fcDraw(); } });
+$("fcCard").addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("fcCard").click(); } });
+$("fcKnow").addEventListener("click", function () { fc.known++; fc.i++; fc.flipped = false; fcDraw(); });
+$("fcNot").addEventListener("click", function () { fc.deck.push(fc.deck[fc.i]); fc.i++; fc.flipped = false; fcDraw(); });
+$("fcRestart").addEventListener("click", fcStart);
+$("fcSwap").addEventListener("click", function () { fc.defFirst = !fc.defFirst; $("fcSwap").textContent = fc.defFirst ? "Start with the word" : "Start with the definition"; fc.flipped = false; fcDraw(); });
+
+/* ---------------- gap fill ---------------- */
+var gapAnswers = [];
+(function () {
+  var html = "", words = [];
+  GAPS.forEach(function (p) {
+    html += '<div class="para">' + p.replace(/\{([^}]+)\}/g, function (_, w) {
+      var id = gapAnswers.length; gapAnswers.push(w); words.push(w);
+      var narrow = w.length <= 2 ? ' style="width:3.5em"' : '';
+      return '<input class="gap" id="gap' + id + '"' + narrow + ' autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Gap ' + (id + 1) + '">';
+    }) + '</div>';
+  });
+  $("gapParas").innerHTML = html;
+  $("bank").innerHTML = shuffle(words).map(function (w) { return "<span>" + w + "</span>"; }).join("");
+})();
+function gapOk(i) { var v = norm($("gap" + i).value), w = gapAnswers[i]; return (GAP_ALT[w] || [w]).indexOf(v) >= 0; }
+$("gapCheck").addEventListener("click", function () {
+  var n = 0;
+  gapAnswers.forEach(function (w, i) { var el = $("gap" + i), ok = gapOk(i); if (ok) n++; el.className = "gap " + (ok ? "ok" : "no"); });
+  $("gapScore").textContent = n + " / " + gapAnswers.length + " correct";
+});
+$("gapShow").addEventListener("click", function () { gapAnswers.forEach(function (w, i) { if (!gapOk(i)) { $("gap" + i).value = w; $("gap" + i).className = "gap"; } }); $("gapScore").textContent = ""; });
+$("gapReset").addEventListener("click", function () { gapAnswers.forEach(function (w, i) { $("gap" + i).value = ""; $("gap" + i).className = "gap"; }); $("gapScore").textContent = ""; });
+
+/* ---------------- matching ---------------- */
+function buildMatch(set, si) {
+  var st = { sel: null, pair: {} };
+  var box = document.createElement("div"); box.className = "mset";
+  var right = shuffle(set.pairs.map(function (p, i) { return i; }));
+  box.innerHTML = '<h3 class="eyebrow">' + set.title + '</h3><div class="mgrid"><div class="mcol" id="mL' + si + '"></div><div class="mcol" id="mR' + si + '"></div></div>' +
+    '<div class="row" style="margin-top:12px"><button class="btn primary" id="mC' + si + '">Check</button><button class="btn" id="mX' + si + '">Clear</button><span class="count" id="mS' + si + '"></span></div>';
+  $("matchSets").appendChild(box);
+  var L = $("mL" + si), R = $("mR" + si);
+  set.pairs.forEach(function (p, i) { L.insertAdjacentHTML("beforeend", '<button class="pick" data-l="' + i + '"><span class="tag"></span><span>' + p[0] + '</span></button>'); });
+  right.forEach(function (i) { R.insertAdjacentHTML("beforeend", '<button class="pick" data-r="' + i + '"><span class="tag"></span><span>' + set.pairs[i][1] + '</span></button>'); });
+  function draw() {
+    var order = Object.keys(st.pair);
+    L.querySelectorAll(".pick").forEach(function (b) {
+      var l = b.dataset.l, has = st.pair[l] !== undefined;
+      b.className = "pick" + (st.sel === l ? " sel" : "") + (has ? " paired" : "");
+      b.querySelector(".tag").textContent = has ? (Number(l) + 1) : "";
+    });
+    R.querySelectorAll(".pick").forEach(function (b) {
+      var r = b.dataset.r, owner = null;
+      order.forEach(function (l) { if (String(st.pair[l]) === r) owner = l; });
+      b.className = "pick" + (owner !== null ? " paired" : "");
+      b.querySelector(".tag").textContent = owner !== null ? (Number(owner) + 1) : "";
+    });
+    $("mS" + si).textContent = "";
+  }
+  L.addEventListener("click", function (e) { var b = e.target.closest(".pick"); if (!b) return; st.sel = st.sel === b.dataset.l ? null : b.dataset.l; draw(); });
+  R.addEventListener("click", function (e) {
+    var b = e.target.closest(".pick"); if (!b || st.sel === null) return;
+    Object.keys(st.pair).forEach(function (l) { if (String(st.pair[l]) === b.dataset.r) delete st.pair[l]; });
+    st.pair[st.sel] = b.dataset.r; st.sel = null; draw();
+  });
+  $("mC" + si).addEventListener("click", function () {
+    var n = 0;
+    L.querySelectorAll(".pick").forEach(function (b) {
+      var l = b.dataset.l, ok = st.pair[l] !== undefined && String(st.pair[l]) === l;
+      if (ok) n++; b.classList.add(ok ? "ok" : "no");
+    });
+    $("mS" + si).textContent = n + " / " + set.pairs.length + " correct" + (n < set.pairs.length ? ". Fix the red ones and check again." : "");
+  });
+  $("mX" + si).addEventListener("click", function () { st.sel = null; st.pair = {}; draw(); });
+  draw();
+}
+MATCH.forEach(buildMatch);
+
+/* ---------------- Q and A ---------------- */
+var qa = { deck: [], i: 0, got: 0 };
+function qaStart() { qa.deck = shuffle(QA); qa.i = 0; qa.got = 0; qaDraw(); }
+function qaDraw() {
+  var total = QA.length;
+  $("qaCount").textContent = qa.got + " of " + total + " correct";
+  $("qaBar").style.width = (qa.got / total * 100) + "%";
+  if (qa.i >= qa.deck.length) {
+    $("qaBox").innerHTML = '<div class="qcard"><p><strong>All ' + total + ' questions done.</strong></p><button class="btn primary" id="qaAgain">Start again</button></div>';
+    $("qaAgain").addEventListener("click", qaStart); return;
+  }
+  var q = qa.deck[qa.i];
+  $("qaBox").innerHTML = '<div class="qcard"><div class="qtext"><strong>' + q[0] + '</strong></div>' +
+    '<textarea id="qaIn" rows="2" aria-label="Your answer"></textarea>' +
+    '<div class="row" style="margin-top:10px"><button class="btn primary" id="qaShow">Show the answer</button></div>' +
+    '<div class="ans" id="qaAns" hidden><div class="lab">Answer</div><div>' + q[1] + '</div>' +
+    '<div class="row" style="margin-top:12px"><button class="btn primary" id="qaGot">I got it</button><button class="btn" id="qaNot">Not yet</button></div></div></div>';
+  $("qaShow").addEventListener("click", function () { $("qaAns").hidden = false; $("qaShow").hidden = true; });
+  $("qaGot").addEventListener("click", function () { qa.got++; qa.i++; qaDraw(); });
+  $("qaNot").addEventListener("click", function () { qa.deck.push(q); qa.i++; qaDraw(); });
+}
+
+/* ---------------- exam ---------------- */
+var exTotal = 0;
+function exScore() {
+  var s = 0;
+  EXAM.forEach(function (q, i) {
+    var n = document.querySelectorAll('#ex' + i + ' .mp input:checked').length;
+    s += Math.min(n, q.marks);
+    var el = $("exs" + i); if (el && !$("exa" + i).hidden) el.textContent = Math.min(n, q.marks) + " / " + q.marks;
+  });
+  $("exScore").textContent = s;
+}
+(function () {
+  var html = "";
+  EXAM.forEach(function (q, i) {
+    exTotal += q.marks;
+    var input = q.type === "num"
+      ? '<textarea rows="3" id="exw' + i + '" aria-label="Working"></textarea><div class="row" style="margin-top:8px"><label for="exn' + i + '"><strong>Answer:</strong></label> <input class="num" id="exn' + i + '" inputmode="decimal" autocomplete="off"> <span>' + q.unit + '</span><span class="verdict" id="exv' + i + '"></span></div>'
+      : '<textarea rows="' + (q.marks >= 4 ? 7 : q.marks + 1) + '" id="exw' + i + '" aria-label="Your answer"></textarea>';
+    html += '<div class="qcard" id="ex' + i + '"><div class="qhead"><span class="qnum">' + (q.label || (i + 1 > 10 ? i - 1 : i + 1)) + '</span><span class="marks">(' + q.marks + ' mark' + (q.marks > 1 ? "s" : "") + ')</span></div>' +
+      '<div class="qtext">' + q.q + '</div>' + input +
+      '<div class="row" style="margin-top:10px"><button class="btn primary" data-mark="' + i + '">Mark it</button><span class="count muted" id="exs' + i + '"></span></div>' +
+      '<div class="ans" id="exa' + i + '" hidden><div class="lab">Mark scheme: tick each point you made</div>' +
+      q.mp.map(function (m, k) { return '<label class="mp"><input type="checkbox" id="exc' + i + '_' + k + '"><span>' + m + '</span></label>'; }).join("") +
+      (q.note ? '<div class="note">' + q.note + '</div>' : "") + '</div></div>';
+  });
+  $("exList").innerHTML = html;
+  $("exTotal").textContent = exTotal;
+  $("exList").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-mark]"); if (!b) return;
+    var i = Number(b.dataset.mark), q = EXAM[i];
+    $("exa" + i).hidden = false;
+    if (q.type === "num") {
+      var v = num($("exn" + i).value), ok = v !== null && Math.abs(v - q.answer) <= q.tol, vd = $("exv" + i);
+      vd.className = "verdict " + (ok ? "ok" : "no");
+      vd.textContent = v === null ? "" : (ok ? "Correct" : "Not quite. Check the working below.");
+      if (ok) q.mp.forEach(function (m, k) { $("exc" + i + "_" + k).checked = true; });
+    }
+    exScore();
+  });
+  $("exList").addEventListener("change", exScore);
+  $("exReset").addEventListener("click", function () {
+    document.querySelectorAll("#exList textarea, #exList .num").forEach(function (t) { t.value = ""; });
+    document.querySelectorAll("#exList input[type=checkbox]").forEach(function (c) { c.checked = false; });
+    document.querySelectorAll("#exList .ans").forEach(function (a) { a.hidden = true; });
+    document.querySelectorAll("#exList .verdict, #exList [id^=exs]").forEach(function (v) { v.textContent = ""; });
+    exScore();
+  });
+})();
+
+pNew(); fcStart(); qaStart(); show(location.hash.slice(1));
+</script>
+
+</body></html>
